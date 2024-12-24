@@ -14,6 +14,16 @@ composer install --ignore-platform-reqs
 
 Run this command
 ``` 
+alias sail='sh $([ -f sail ] && echo sail || echo vendor/bin/sail)'
+```
+
+Run this command
+``` 
+sail up -d
+```
+
+Run this command
+``` 
 sail artisan key:generate 
 ```
 
