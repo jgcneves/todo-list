@@ -9,9 +9,9 @@ class TaskService implements TaskServiceInterface
 {
     private TaskRepositoryInterface $taskRepository;
 
-    public function __construct(TaskRepositoryInterface $taskRepository)
+    public function __construct(TaskRepositoryInterface $taskRepositoryInterface)
     {
-        $this->taskRepository = $taskRepository;
+        $this->taskRepository = $taskRepositoryInterface;
     }
 
     public function getAllTasks()

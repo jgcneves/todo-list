@@ -23,7 +23,7 @@ class Task extends Model
      * @var list<string>
      */
     protected $fillable = [
-        'name',
+        'title',
         'status',
     ];
 

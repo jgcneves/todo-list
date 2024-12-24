@@ -7,12 +7,10 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules\Enum;
 
-class TaskRequest extends FormRequest
+class CreateTaskRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
-     *
-     * @return bool
      */
     public function authorize(): bool
     {
@@ -28,7 +26,7 @@ class TaskRequest extends FormRequest
     {
         return [
             'title' => ['required', 'string', 'max:255'],
-             'status' => ['required', new Enum(TaskStatus::class)],
+            'status' => ['required', new Enum(TaskStatus::class)],
         ];
     }
 }

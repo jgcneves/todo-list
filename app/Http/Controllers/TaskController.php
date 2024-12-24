@@ -3,9 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Contracts\Services\TaskServiceInterface;
+use App\Http\Requests\CreateTaskRequest;
 use App\Http\Requests\TaskRequest;
+use App\Http\Requests\UpdateTaskRequest;
 use App\Models\Task;
-use Illuminate\Http\Request;
+use Exception;
+use GuzzleHttp\Promise\Create;
+use Illuminate\Support\Facades\Log;
+use Inertia\Inertia;
+use Throwable;
 
 class TaskController extends Controller
 {
@@ -18,31 +24,58 @@ class TaskController extends Controller
 
     public function index()
     {
-        $tasks = $this->taskService->getAllTasks();
-        return response()->json($tasks);
+        return Inertia::render('Task/Index', [
+            'tasks' => $this->taskService->getAllTasks(),
+        ]);
     }
 
-    public function store(TaskRequest $request)
+    public function store(CreateTaskRequest $request)
     {
-        $task = $this->taskService->createTask($request->validated());
-        return response()->json($task, Response::HTTP_CREATED);
+        try {
+            $this->taskService->createTask($request->validated());
+            return redirect()->back();
+        } catch (Throwable $throwable) {
+            // Register the errors in the log
+            Log::error('Error: ' . $throwable->getMessage(), [
+                'exception' => $throwable,
+                'context' => 'An error occurred while creating a new task.',
+            ]);
+
+            // Capture and display errors and exceptions in the development environment
+            if (app()->environment() === 'local') {
+                dd('An error occurred while creating a new task.', $throwable);
+            }
+
+            // Return an exception with a standard response.
+            throw new Exception('An error occurred while creating a new task.');
+        }
     }
 
-    public function show(int $id)
+    public function update(UpdateTaskRequest $request, int $id)
     {
-        $task = $this->taskService->getTaskById($id);
-        return response()->json($task);
-    }
+        try {
+            $this->taskService->updateTask($id, $request->validated());
+            return redirect()->back();
+        } catch (Throwable $throwable) {
+            // Register the errors in the log
+            Log::error('Error: ' . $throwable->getMessage(), [
+                'exception' => $throwable,
+                'context' => 'An error occurred while creating a new task.',
+            ]);
 
-    public function update(TaskRequest $request, int $id)
-    {
-        $task = $this->taskService->updateTask($id, $request->validated());
-        return response()->json($task);
+            // Capture and display errors and exceptions in the development environment
+            if (app()->environment() === 'local') {
+                dd('An error occurred while creating a new task.', $throwable);
+            }
+
+            // Return an exception with a standard response.
+            throw new Exception('An error occurred while creating a new task.');
+        }
     }
 
     public function destroy(int $id)
     {
         $this->taskService->deleteTask($id);
-        return response()->json(null, Response::HTTP_NO_CONTENT);
+        return redirect()->back();
     }
 }
