@@ -45,34 +45,18 @@
             status: false,
         };
 
-        axios.post(route('tasks.store'), payload)
-            .then(function (response) {
+        router.post(route('tasks.store'), payload, {
+            onSuccess(response) {
                 isCreateTaskDialogOpen.value = false
                 toast({
                     title: 'The task was created successfully!',
-                })
-            })
-            .catch(function (error) {
-                Object.entries(error).forEach(([field, message]) => {
-                    setFieldError(field, message);
-                })
-            })
-    })
-
-    // Update task
-    function onUpdate(id: number) {
-        router.put(route('tasks.update', {id}), 'asd',{
-            onSuccess(response) {
-
-                toast({
-                    title: 'The task was deleted successfully!',
                 })
             },
             onError(response) {
                 console.error(response)
             }
         })
-    }
+    })
 
     function handleCheckboxChange(event, id: number) {
         const value = event.target.value;
@@ -94,8 +78,6 @@
         console.log(`ID: ${id}, Value: ${value}, Checked: ${status}`);
         // Aqui você pode manipular os dados como desejar
     }
-
-
 
     const openDeleteDialog = (id: number) => {
         currentTaskId.value = id
@@ -212,10 +194,6 @@
                         </div>
 
                         <div class="flex items-center gap-2">
-                            <Button size="icon" variant="secondary">
-                                <Pencil />
-                            </Button>
-
                             <Button size="icon" variant="destructive" @click="openDeleteDialog(task.id)">
                                 <Trash2 />
                             </Button>
